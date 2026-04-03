@@ -1,0 +1,60 @@
+# Data Analysis Agent - Configuration
+
+# Sheet detection
+sheet_detection:
+  prefer_largest: true           # Prefer the sheet with most non-empty cells
+  skip_hidden_sheets: true       # Ignore hidden sheets
+  max_header_scan_rows: 20       # How many rows to scan for table header
+
+# Schema inference
+schema_inference:
+  datetime_threshold: 0.85       # % of values parseable as dates to call it datetime
+  numeric_threshold: 0.90        # % of values parseable as numbers to call it numeric
+  categorical_max_unique_ratio: 0.20  # If unique/total < this, treat as categorical
+  id_min_unique_ratio: 0.95      # If unique/total > this, treat as potential ID column
+  boolean_values:                # Values that represent booleans
+    true: ["true", "yes", "1", "y", "t"]
+    false: ["false", "no", "0", "n", "f"]
+
+# Quality checks
+quality_checks:
+  outlier_iqr_multiplier: 1.5    # IQR multiplier for box plot outlier detection
+  outlier_zscore_threshold: 3.0  # Z-score threshold for outlier detection
+  high_null_threshold: 0.50      # Flag column if null% > 50%
+  skewness_threshold: 1.0        # Flag distribution as skewed if |skew| > 1.0
+
+# Semantic layer
+semantic_layer:
+  auto_kpi_generation: true      # Attempt to auto-generate KPIs
+  standardize_names: true        # Convert column names to snake_case
+  synonym_mapping:               # Common synonym mappings
+    amount: ["amt", "value", "val", "sum"]
+    quantity: ["qty", "count", "cnt", "num"]
+    date: ["dt", "created_at", "updated_at", "timestamp"]
+    revenue: ["rev", "sales", "income", "earnings"]
+    customer: ["client", "cust", "buyer", "account"]
+    product: ["item", "sku", "goods", "merchandise"]
+    region: ["area", "zone", "territory", "geo"]
+    category: ["cat", "type", "class", "segment"]
+
+# Analysis engine
+analysis:
+  top_n_categories: 15           # Show top N categories in distribution analysis
+  correlation_min_columns: 2     # Min numeric columns needed for correlation
+  time_series_min_points: 10     # Min time points for trend analysis
+  max_scatter_points: 5000       # Down-sample scatter plots above this size
+
+# Visualization
+visualization:
+  max_charts: 30                 # Maximum charts to generate
+  color_palette: "plotly"        # Plotly color palette
+  chart_height: 450
+  chart_width: 800
+
+# Reporting
+reporting:
+  confidence_thresholds:
+    high: 0.80
+    medium: 0.60
+    low: 0.0
+  max_insights: 20               # Maximum insights to include in report

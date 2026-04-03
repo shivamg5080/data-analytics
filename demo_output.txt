@@ -1,0 +1,156 @@
+Building Semantic Layer...
+
+==========================================
+1. HUMAN-READABLE SUMMARY
+==========================================
+**Semantic Layer Summary**
+- **3 Dimension(s)**: category, sub_category, is_taxed
+- **3 Measure(s)**: revenue_usd, quantity_sold, tax_rate
+- **1 Time Field(s)**: date
+- **1 Entity/Identifier(s)**: order_id
+- **6 Auto-Generated KPI(s)**
+
+==========================================
+2. AUTO-GENERATED KPIs
+==========================================
+- total_revenue_usd: SUM(Revenue_USD)
+  Description: Total Revenue USD across all records
+- total_quantity_sold: SUM(Quantity_Sold)
+  Description: Total Quantity Sold across all records
+- avg_tax_rate: AVG(Tax_Rate)
+  Description: Average Tax Rate
+- revenue_per_unit: SUM(Revenue_USD) / SUM(Quantity_Sold)
+  Description: Average revenue generated per unit sold
+- record_count_by_category: COUNT(*) GROUP BY Category
+  Description: Number of records per Category
+- record_count_by_sub_category: COUNT(*) GROUP BY Sub_Category
+  Description: Number of records per Sub Category
+
+==========================================
+3. DBT-STYLE YAML EXPORT
+==========================================
+semantic_layer:
+  version: '1.0'
+  dimensions:
+  - raw_column: Category
+    semantic_name: category
+    description: 'Categorical dimension: Category'
+    nullable: false
+    semantic_type: dimension
+    values:
+    - Electronics
+    - Furniture
+    - Office
+  - raw_column: Sub_Category
+    semantic_name: sub_category
+    description: 'Categorical dimension: Sub Category'
+    nullable: false
+    semantic_type: dimension
+    values:
+    - Chairs
+    - Laptops
+    - Paper
+    - Phones
+    - Tables
+  - raw_column: Is_Taxed
+    semantic_name: is_taxed
+    description: 'Boolean flag: Is Taxed'
+    nullable: false
+    semantic_type: dimension
+    values:
+    - 'False'
+    - 'True'
+  measures:
+  - raw_column: Revenue_USD
+    semantic_name: revenue_usd
+    description: 'Numeric measure: Revenue Usd'
+    nullable: false
+    semantic_type: measure
+    aggregation: sum
+    format: currency
+  - raw_column: Quantity_Sold
+    semantic_name: quantity_sold
+    description: 'Numeric measure: Quantity Sold'
+    nullable: false
+    semantic_type: measure
+    aggregation: sum
+    format: number
+  - raw_column: Tax_Rate
+    semantic_name: tax_rate
+    description: 'Numeric measure: Tax Rate'
+    nullable: false
+    semantic_type: measure
+    aggregation: avg
+    format: percentage
+  time_fields:
+  - raw_column: Date
+    semantic_name: date
+    description: 'Time field: Date'
+    nullable: false
+    semantic_type: time
+    granularities:
+    - day
+    - month
+    - quarter
+    - year
+  entities:
+  - raw_column: Order_ID
+    semantic_name: order_id
+    description: 'Unique identifier: Order Id'
+    nullable: false
+    semantic_type: entity
+  kpis:
+  - name: total_revenue_usd
+    semantic_type: kpi
+    formula: SUM(Revenue_USD)
+    description: Total Revenue USD across all records
+    format: currency
+    source_measures:
+    - revenue_usd
+  - name: total_quantity_sold
+    semantic_type: kpi
+    formula: SUM(Quantity_Sold)
+    description: Total Quantity Sold across all records
+    format: number
+    source_measures:
+    - quantity_sold
+  - name: avg_tax_rate
+    semantic_type: kpi
+    formula: AVG(Tax_Rate)
+    description: Average Tax Rate
+    format: percentage
+    source_measures:
+    - tax_rate
+  - name: revenue_per_unit
+    semantic_type: kpi
+    formula: SUM(Revenue_USD) / SUM(Quantity_Sold)
+    description: Average revenue generated per unit sold
+    format: currency
+    source_measures:
+    - revenue_usd
+    - quantity_sold
+  - name: record_count_by_category
+    semantic_type: kpi
+    formula: COUNT(*) GROUP BY Category
+    description: Number of records per Category
+    format: number
+    source_measures: []
+  - name: record_count_by_sub_category
+    semantic_type: kpi
+    formula: COUNT(*) GROUP BY Sub_Category
+    description: Number of records per Sub Category
+    format: number
+    source_measures: []
+
+
+==========================================
+4. COLUMN LINEAGE
+==========================================
+Order_ID -> order_id
+Date -> date
+Category -> category
+Sub_Category -> sub_category
+Revenue_USD -> revenue_usd
+Quantity_Sold -> quantity_sold
+Tax_Rate -> tax_rate
+Is_Taxed -> is_taxed

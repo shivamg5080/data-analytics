@@ -1,0 +1,180 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.5, pytest-8.3.5, pluggy-1.5.0 -- C:\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\shiva\Downloads\data analysis agent
+plugins: cov-7.1.0, timeout-2.4.0
+collecting ... collected 25 items
+
+tests/test_ingestion.py::TestLoadExcel::test_basic_load FAILED           [  4%]
+tests/test_ingestion.py::TestLoadExcel::test_sheet_name_returned FAILED  [  8%]
+tests/test_ingestion.py::TestLoadExcel::test_empty_file_raises PASSED    [ 12%]
+tests/test_ingestion.py::TestLoadExcel::test_duplicate_columns_handled FAILED [ 16%]
+tests/test_ingestion.py::TestLoadExcel::test_multi_row_header_detection FAILED [ 20%]
+tests/test_quality_checks.py::TestQualityChecks::test_null_detection FAILED [ 24%]
+tests/test_quality_checks.py::TestQualityChecks::test_duplicate_row_detection FAILED [ 28%]
+tests/test_quality_checks.py::TestQualityChecks::test_outlier_detection_iqr FAILED [ 32%]
+tests/test_quality_checks.py::TestQualityChecks::test_fully_null_column_flagged FAILED [ 36%]
+tests/test_quality_checks.py::TestQualityChecks::test_overall_score_decreases_with_nulls FAILED [ 40%]
+tests/test_quality_checks.py::TestQualityChecks::test_does_not_crash_on_all_bad_data FAILED [ 44%]
+tests/test_schema_inference.py::TestInferSchema::test_numeric_column_detected PASSED [ 48%]
+tests/test_schema_inference.py::TestInferSchema::test_categorical_column_detected FAILED [ 52%]
+tests/test_schema_inference.py::TestInferSchema::test_datetime_column_detected PASSED [ 56%]
+tests/test_schema_inference.py::TestInferSchema::test_boolean_column_detected PASSED [ 60%]
+tests/test_schema_inference.py::TestInferSchema::test_fully_empty_column_excluded_from_analysis PASSED [ 64%]
+tests/test_schema_inference.py::TestInferSchema::test_data_dictionary_has_all_columns FAILED [ 68%]
+tests/test_schema_inference.py::TestInferSchema::test_null_pct_in_data_dict FAILED [ 72%]
+tests/test_schema_inference.py::TestInferSchema::test_identifier_column_excluded FAILED [ 76%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_has_required_keys FAILED [ 80%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_numeric_cols_become_measures FAILED [ 84%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_categorical_cols_become_dimensions FAILED [ 88%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_datetime_cols_become_time_fields FAILED [ 92%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_kpis_auto_generated_when_measures_present FAILED [ 96%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_identifier_not_in_dimensions_or_measures FAILED [100%]
+
+================================== FAILURES ===================================
+________________________ TestLoadExcel.test_basic_load ________________________
+tests\test_ingestion.py:25: in test_basic_load
+    result = load_excel(buf, filename="test.xlsx")
+E   TypeError: load_excel() got an unexpected keyword argument 'filename'
+___________________ TestLoadExcel.test_sheet_name_returned ____________________
+tests\test_ingestion.py:34: in test_sheet_name_returned
+    result = load_excel(buf, filename="test.xlsx")
+E   TypeError: load_excel() got an unexpected keyword argument 'filename'
+________________ TestLoadExcel.test_duplicate_columns_handled _________________
+tests\test_ingestion.py:56: in test_duplicate_columns_handled
+    result = load_excel(buf, filename="dup_cols.xlsx")
+E   TypeError: load_excel() got an unexpected keyword argument 'filename'
+________________ TestLoadExcel.test_multi_row_header_detection ________________
+tests\test_ingestion.py:76: in test_multi_row_header_detection
+    result = load_excel(buf, filename="title_row.xlsx")
+E   TypeError: load_excel() got an unexpected keyword argument 'filename'
+____________________ TestQualityChecks.test_null_detection ____________________
+tests\test_quality_checks.py:25: in test_null_detection
+    result = self._run(df)
+tests\test_quality_checks.py:21: in _run
+    return run_quality_checks(df, column_types, analysis_columns)
+agent\quality_checks.py:42: in run_quality_checks
+    cfg = (config or {}).get("quality_checks", {})
+E   AttributeError: 'list' object has no attribute 'get'
+_______________ TestQualityChecks.test_duplicate_row_detection ________________
+tests\test_quality_checks.py:31: in test_duplicate_row_detection
+    result = self._run(df)
+tests\test_quality_checks.py:21: in _run
+    return run_quality_checks(df, column_types, analysis_columns)
+agent\quality_checks.py:42: in run_quality_checks
+    cfg = (config or {}).get("quality_checks", {})
+E   AttributeError: 'list' object has no attribute 'get'
+________________ TestQualityChecks.test_outlier_detection_iqr _________________
+tests\test_quality_checks.py:38: in test_outlier_detection_iqr
+    result = self._run(df, column_types={"val": "numeric"})
+tests\test_quality_checks.py:21: in _run
+    return run_quality_checks(df, column_types, analysis_columns)
+agent\quality_checks.py:42: in run_quality_checks
+    cfg = (config or {}).get("quality_checks", {})
+E   AttributeError: 'list' object has no attribute 'get'
+______________ TestQualityChecks.test_fully_null_column_flagged _______________
+tests\test_quality_checks.py:44: in test_fully_null_column_flagged
+    result = self._run(df, column_types={"a": "numeric", "b": "numeric"})
+tests\test_quality_checks.py:21: in _run
+    return run_quality_checks(df, column_types, analysis_columns)
+agent\quality_checks.py:42: in run_quality_checks
+    cfg = (config or {}).get("quality_checks", {})
+E   AttributeError: 'list' object has no attribute 'get'
+__________ TestQualityChecks.test_overall_score_decreases_with_nulls __________
+tests\test_quality_checks.py:53: in test_overall_score_decreases_with_nulls
+    r_clean = self._run(df_clean)
+tests\test_quality_checks.py:21: in _run
+    return run_quality_checks(df, column_types, analysis_columns)
+agent\quality_checks.py:42: in run_quality_checks
+    cfg = (config or {}).get("quality_checks", {})
+E   AttributeError: 'list' object has no attribute 'get'
+____________ TestQualityChecks.test_does_not_crash_on_all_bad_data ____________
+tests\test_quality_checks.py:62: in test_does_not_crash_on_all_bad_data
+    result = self._run(df, column_types={"mixed": "text", "all_null": "numeric"})
+tests\test_quality_checks.py:21: in _run
+    return run_quality_checks(df, column_types, analysis_columns)
+agent\quality_checks.py:42: in run_quality_checks
+    cfg = (config or {}).get("quality_checks", {})
+E   AttributeError: 'list' object has no attribute 'get'
+______________ TestInferSchema.test_categorical_column_detected _______________
+tests\test_schema_inference.py:26: in test_categorical_column_detected
+    assert result["column_types"]["region"] == "categorical"
+E   AssertionError: assert 'text' == 'categorical'
+E     
+E     - categorical
+E     + text
+____________ TestInferSchema.test_data_dictionary_has_all_columns _____________
+tests\test_schema_inference.py:46: in test_data_dictionary_has_all_columns
+    dd_cols = {entry["column"] for entry in result["data_dictionary"]}
+E   KeyError: 'column'
+_________________ TestInferSchema.test_null_pct_in_data_dict __________________
+tests\test_schema_inference.py:52: in test_null_pct_in_data_dict
+    val_entry = next(e for e in result["data_dictionary"] if e["column"] == "val")
+tests\test_schema_inference.py:52: in <genexpr>
+    val_entry = next(e for e in result["data_dictionary"] if e["column"] == "val")
+E   KeyError: 'column'
+_______________ TestInferSchema.test_identifier_column_excluded _______________
+tests\test_schema_inference.py:62: in test_identifier_column_excluded
+    assert result["column_types"].get("order_id") == "identifier"
+E   AssertionError: assert 'text' == 'identifier'
+E     
+E     - identifier
+E     + text
+__________________ TestSemanticLayer.test_has_required_keys ___________________
+tests\test_semantic_layer.py:31: in test_has_required_keys
+    result = self._build(df, {"cat": "categorical", "val": "numeric"})
+tests\test_semantic_layer.py:27: in _build
+    return build_semantic_layer(df, column_types, analysis_columns)
+E   TypeError: build_semantic_layer() missing 1 required positional argument: 'analysis_columns'
+_____________ TestSemanticLayer.test_numeric_cols_become_measures _____________
+tests\test_semantic_layer.py:37: in test_numeric_cols_become_measures
+    result = self._build(df, {"revenue": "numeric", "cost": "numeric"})
+tests\test_semantic_layer.py:27: in _build
+    return build_semantic_layer(df, column_types, analysis_columns)
+E   TypeError: build_semantic_layer() missing 1 required positional argument: 'analysis_columns'
+__________ TestSemanticLayer.test_categorical_cols_become_dimensions __________
+tests\test_semantic_layer.py:44: in test_categorical_cols_become_dimensions
+    result = self._build(df, {"region": "categorical"})
+tests\test_semantic_layer.py:27: in _build
+    return build_semantic_layer(df, column_types, analysis_columns)
+E   TypeError: build_semantic_layer() missing 1 required positional argument: 'analysis_columns'
+___________ TestSemanticLayer.test_datetime_cols_become_time_fields ___________
+tests\test_semantic_layer.py:50: in test_datetime_cols_become_time_fields
+    result = self._build(df, {"order_date": "datetime"})
+tests\test_semantic_layer.py:27: in _build
+    return build_semantic_layer(df, column_types, analysis_columns)
+E   TypeError: build_semantic_layer() missing 1 required positional argument: 'analysis_columns'
+______ TestSemanticLayer.test_kpis_auto_generated_when_measures_present _______
+tests\test_semantic_layer.py:59: in test_kpis_auto_generated_when_measures_present
+    result = self._build(df, {"revenue": "numeric", "units": "numeric"})
+tests\test_semantic_layer.py:27: in _build
+    return build_semantic_layer(df, column_types, analysis_columns)
+E   TypeError: build_semantic_layer() missing 1 required positional argument: 'analysis_columns'
+_______ TestSemanticLayer.test_identifier_not_in_dimensions_or_measures _______
+tests\test_semantic_layer.py:68: in test_identifier_not_in_dimensions_or_measures
+    result = self._build(df, {"order_id": "identifier", "revenue": "numeric"})
+tests\test_semantic_layer.py:27: in _build
+    return build_semantic_layer(df, column_types, analysis_columns)
+E   TypeError: build_semantic_layer() missing 1 required positional argument: 'analysis_columns'
+=========================== short test summary info ===========================
+FAILED tests/test_ingestion.py::TestLoadExcel::test_basic_load - TypeError: l...
+FAILED tests/test_ingestion.py::TestLoadExcel::test_sheet_name_returned - Typ...
+FAILED tests/test_ingestion.py::TestLoadExcel::test_duplicate_columns_handled
+FAILED tests/test_ingestion.py::TestLoadExcel::test_multi_row_header_detection
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_null_detection
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_duplicate_row_detection
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_outlier_detection_iqr
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_fully_null_column_flagged
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_overall_score_decreases_with_nulls
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_does_not_crash_on_all_bad_data
+FAILED tests/test_schema_inference.py::TestInferSchema::test_categorical_column_detected
+FAILED tests/test_schema_inference.py::TestInferSchema::test_data_dictionary_has_all_columns
+FAILED tests/test_schema_inference.py::TestInferSchema::test_null_pct_in_data_dict
+FAILED tests/test_schema_inference.py::TestInferSchema::test_identifier_column_excluded
+FAILED tests/test_semantic_layer.py::TestSemanticLayer::test_has_required_keys
+FAILED tests/test_semantic_layer.py::TestSemanticLayer::test_numeric_cols_become_measures
+FAILED tests/test_semantic_layer.py::TestSemanticLayer::test_categorical_cols_become_dimensions
+FAILED tests/test_semantic_layer.py::TestSemanticLayer::test_datetime_cols_become_time_fields
+FAILED tests/test_semantic_layer.py::TestSemanticLayer::test_kpis_auto_generated_when_measures_present
+FAILED tests/test_semantic_layer.py::TestSemanticLayer::test_identifier_not_in_dimensions_or_measures
+======================== 20 failed, 5 passed in 7.41s =========================

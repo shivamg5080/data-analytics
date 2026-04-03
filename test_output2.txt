@@ -1,0 +1,145 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.5, pytest-8.3.5, pluggy-1.5.0 -- C:\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\shiva\Downloads\data analysis agent
+plugins: cov-7.1.0, timeout-2.4.0
+collecting ... collected 25 items
+
+tests/test_ingestion.py::TestLoadExcel::test_basic_load FAILED           [  4%]
+tests/test_ingestion.py::TestLoadExcel::test_sheet_name_returned PASSED  [  8%]
+tests/test_ingestion.py::TestLoadExcel::test_empty_file_raises PASSED    [ 12%]
+tests/test_ingestion.py::TestLoadExcel::test_duplicate_columns_handled PASSED [ 16%]
+tests/test_ingestion.py::TestLoadExcel::test_multi_row_header_detection PASSED [ 20%]
+tests/test_quality_checks.py::TestQualityChecks::test_null_detection FAILED [ 24%]
+tests/test_quality_checks.py::TestQualityChecks::test_duplicate_row_detection FAILED [ 28%]
+tests/test_quality_checks.py::TestQualityChecks::test_outlier_detection_iqr FAILED [ 32%]
+tests/test_quality_checks.py::TestQualityChecks::test_fully_null_column_flagged FAILED [ 36%]
+tests/test_quality_checks.py::TestQualityChecks::test_overall_score_decreases_with_nulls FAILED [ 40%]
+tests/test_quality_checks.py::TestQualityChecks::test_does_not_crash_on_all_bad_data FAILED [ 44%]
+tests/test_schema_inference.py::TestInferSchema::test_numeric_column_detected PASSED [ 48%]
+tests/test_schema_inference.py::TestInferSchema::test_categorical_column_detected PASSED [ 52%]
+tests/test_schema_inference.py::TestInferSchema::test_datetime_column_detected PASSED [ 56%]
+tests/test_schema_inference.py::TestInferSchema::test_boolean_column_detected PASSED [ 60%]
+tests/test_schema_inference.py::TestInferSchema::test_fully_empty_column_excluded_from_analysis PASSED [ 64%]
+tests/test_schema_inference.py::TestInferSchema::test_data_dictionary_has_all_columns PASSED [ 68%]
+tests/test_schema_inference.py::TestInferSchema::test_null_pct_in_data_dict PASSED [ 72%]
+tests/test_schema_inference.py::TestInferSchema::test_identifier_column_excluded PASSED [ 76%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_has_required_keys PASSED [ 80%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_numeric_cols_become_measures PASSED [ 84%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_categorical_cols_become_dimensions PASSED [ 88%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_datetime_cols_become_time_fields PASSED [ 92%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_kpis_auto_generated_when_measures_present PASSED [ 96%]
+tests/test_semantic_layer.py::TestSemanticLayer::test_identifier_not_in_dimensions_or_measures PASSED [100%]
+
+================================== FAILURES ===================================
+________________________ TestLoadExcel.test_basic_load ________________________
+
+self = <tests.test_ingestion.TestLoadExcel object at 0x000001E11BA74B00>
+
+    def test_basic_load(self):
+        from agent.ingestion import load_excel
+        df_in = pd.DataFrame({"A": [1, 2, 3], "B": ["x", "y", "z"]})
+        buf = _make_xlsx_bytes(df_in)
+        result = load_excel(buf, filename="test.xlsx")
+        assert "dataframe" in result
+        assert len(result["dataframe"]) == 3
+>       assert list(result["dataframe"].columns) == ["A", "B"]
+E       AssertionError: assert ['a', 'b'] == ['A', 'B']
+E         
+E         At index 0 diff: 'a' != 'A'
+E         
+E         Full diff:
+E           [
+E         -     'A',
+E         ?      ^...
+E         
+E         ...Full output truncated (7 lines hidden), use '-vv' to show
+
+tests\test_ingestion.py:28: AssertionError
+____________________ TestQualityChecks.test_null_detection ____________________
+
+self = <tests.test_quality_checks.TestQualityChecks object at 0x000001E11BF643B0>
+
+    def test_null_detection(self):
+        df = pd.DataFrame({"a": [1.0, None, 3.0, None, 5.0]})
+        result = self._run(df)
+>       cq = next(c for c in result["column_quality"] if c["column"] == "a")
+E       KeyError: 'column_quality'
+
+tests\test_quality_checks.py:26: KeyError
+_______________ TestQualityChecks.test_duplicate_row_detection ________________
+
+self = <tests.test_quality_checks.TestQualityChecks object at 0x000001E11BF64890>
+
+    def test_duplicate_row_detection(self):
+        df = pd.DataFrame({"a": [1, 2, 1, 3, 2], "b": ["x", "y", "x", "z", "y"]})
+        result = self._run(df)
+>       assert result.get("duplicate_row_count", 0) >= 2
+E       AssertionError: assert 0 >= 2
+E        +  where 0 = <built-in method get of dict object at 0x000001E134A8CAC0>('duplicate_row_count', 0)
+E        +    where <built-in method get of dict object at 0x000001E134A8CAC0> = {'issues': [], 'overall': {'errors': 0, 'infos': 0, 'overall_null_pct': 0.0, 'total_cells': 10, ...}, 'per_column': [{'column': 'a', 'issues': [], 'non_null_count': 5, 'non_null_pct': 100.0, ...}, {'column': 'b', 'issues': [], 'non_null_count': 5, 'non_null_pct': 100.0, ...}], 'quality_score': 100.0}.get
+
+tests\test_quality_checks.py:32: AssertionError
+________________ TestQualityChecks.test_outlier_detection_iqr _________________
+
+self = <tests.test_quality_checks.TestQualityChecks object at 0x000001E11BF649B0>
+
+    def test_outlier_detection_iqr(self):
+        vals = list(range(1, 101))
+        vals.append(9999)  # extreme outlier
+        df = pd.DataFrame({"val": vals})
+        result = self._run(df, column_types={"val": "numeric"})
+>       cq = next(c for c in result["column_quality"] if c["column"] == "val")
+E       KeyError: 'column_quality'
+
+tests\test_quality_checks.py:39: KeyError
+______________ TestQualityChecks.test_fully_null_column_flagged _______________
+
+self = <tests.test_quality_checks.TestQualityChecks object at 0x000001E11BF64AD0>
+
+    def test_fully_null_column_flagged(self):
+        df = pd.DataFrame({"a": [1, 2, 3], "b": [None, None, None]})
+        result = self._run(df, column_types={"a": "numeric", "b": "numeric"})
+        issues = result.get("issues", [])
+        assert any("b" in i for i in issues) or any(
+>           c["column"] == "b" and c["null_pct"] == 100 for c in result["column_quality"]
+        )
+E       KeyError: 'column_quality'
+
+tests\test_quality_checks.py:47: KeyError
+__________ TestQualityChecks.test_overall_score_decreases_with_nulls __________
+
+self = <tests.test_quality_checks.TestQualityChecks object at 0x000001E11BF64BF0>
+
+    def test_overall_score_decreases_with_nulls(self):
+        df_clean = pd.DataFrame({"a": [1.0, 2.0, 3.0]})
+        df_nulls = pd.DataFrame({"a": [1.0, None, None]})
+        r_clean = self._run(df_clean)
+        r_nulls = self._run(df_nulls)
+>       assert r_clean["overall_score"] > r_nulls["overall_score"]
+E       KeyError: 'overall_score'
+
+tests\test_quality_checks.py:55: KeyError
+____________ TestQualityChecks.test_does_not_crash_on_all_bad_data ____________
+
+self = <tests.test_quality_checks.TestQualityChecks object at 0x000001E11BF64D10>
+
+    def test_does_not_crash_on_all_bad_data(self):
+        df = pd.DataFrame({
+            "mixed": ["abc", 123, None, True, 3.14],
+            "all_null": [None] * 5,
+        })
+        result = self._run(df, column_types={"mixed": "text", "all_null": "numeric"})
+>       assert "overall_score" in result
+E       assert 'overall_score' in {'issues': [{'column': 'mixed', 'message': "Mixed value types detected: {'bool', 'float', 'int'}", 'severity': 'warning'}, {'column': 'all_null', 'message': 'High null rate: 100.0%', 'severity': 'warning'}], 'overall': {'errors': 0, 'infos': 0, 'overall_null_pct': 60.0, 'total_cells': 10, ...}, 'per_column': [{'column': 'mixed', 'issues': ["Mixed value types detected: {'bool', 'float', 'int'}"], 'non_null_count': 4, 'non_null_pct': 80.0, ...}, {'column': 'all_null', 'issues': ['High null rate: 100.0%'], 'non_null_count': 0, 'non_null_pct': 0.0, ...}], 'quality_score': np.float64(72.0)}
+
+tests\test_quality_checks.py:63: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_ingestion.py::TestLoadExcel::test_basic_load - AssertionErr...
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_null_detection
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_duplicate_row_detection
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_outlier_detection_iqr
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_fully_null_column_flagged
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_overall_score_decreases_with_nulls
+FAILED tests/test_quality_checks.py::TestQualityChecks::test_does_not_crash_on_all_bad_data
+======================== 7 failed, 18 passed in 17.82s ========================
